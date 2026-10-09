@@ -1,0 +1,202 @@
+Current configuration : 4791 bytes
+!
+version 15.4
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R1
+!
+login block-for 60 attempts 3 within 30
+login on-failure log
+login on-success log
+!
+!
+enable secret 5 <REDACTED>
+!
+!
+ip dhcp excluded-address 192.168.10.1 192.168.10.20
+ip dhcp excluded-address 192.168.20.1 192.168.20.20
+ip dhcp excluded-address 192.168.30.1 192.168.30.20
+!
+ip dhcp pool STAFF
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 198.51.100.10
+ip dhcp pool GUEST
+ network 192.168.20.0 255.255.255.0
+ default-router 192.168.20.1
+ dns-server 198.51.100.10
+ip dhcp pool IOT
+ network 192.168.30.0 255.255.255.0
+ default-router 192.168.30.1
+ dns-server 198.51.100.10
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+username admin secret 5 <REDACTED>
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+ip ssh time-out 60
+no ip domain-lookup
+ip domain-name soho.lab
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/0.10
+ description STAFF
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+ ip nat inside
+!
+interface GigabitEthernet0/0/0.20
+ description GUEST
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+ ip nat inside
+ ip access-group GUEST-IN in
+!
+interface GigabitEthernet0/0/0.30
+ description IOT
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+ ip nat inside
+ ip access-group IOT-IN in
+!
+interface GigabitEthernet0/0/0.40
+ description SERVERS
+ encapsulation dot1Q 40
+ ip address 192.168.40.1 255.255.255.0
+ ip nat inside
+ ip access-group SERVERS-IN in
+!
+interface GigabitEthernet0/0/0.50
+ description DMZ
+ encapsulation dot1Q 50
+ ip address 172.16.50.1 255.255.255.0
+ ip nat inside
+ ip access-group DMZ-IN in
+!
+interface GigabitEthernet0/0/0.99
+ description MGMT
+ encapsulation dot1Q 99
+ ip address 192.168.99.1 255.255.255.0
+!
+interface GigabitEthernet0/0/0.999
+ description DEAD_NATIVE
+ encapsulation dot1Q 999 native
+ no ip address
+!
+interface GigabitEthernet0/0/1
+ description TO_ISP
+ ip address 203.0.113.2 255.255.255.248
+ ip nat outside
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+ip nat inside source list NAT-INSIDE interface GigabitEthernet0/0/1 overload
+ip nat inside source static 172.16.50.10 203.0.113.3 
+ip classless
+ip route 0.0.0.0 0.0.0.0 203.0.113.1 
+!
+ip flow-export version 9
+!
+!
+ip access-list standard NAT-INSIDE
+ permit 192.168.10.0 0.0.0.255
+ permit 192.168.20.0 0.0.0.255
+ permit 192.168.30.0 0.0.0.255
+ permit 192.168.40.0 0.0.0.255
+ip access-list extended sl_def_acl
+ deny tcp any any eq telnet
+ deny tcp any any eq www
+ deny tcp any any eq 22
+ permit tcp any any eq 22
+ip access-list extended GUEST-IN
+ permit udp any eq bootpc any eq bootps
+ deny ip 192.168.20.0 0.0.0.255 192.168.10.0 0.0.0.255
+ deny ip 192.168.20.0 0.0.0.255 192.168.30.0 0.0.0.255
+ deny ip 192.168.20.0 0.0.0.255 192.168.40.0 0.0.0.255
+ deny ip 192.168.20.0 0.0.0.255 192.168.99.0 0.0.0.255
+ deny ip 192.168.20.0 0.0.0.255 172.16.50.0 0.0.0.255
+ permit ip 192.168.20.0 0.0.0.255 any
+ip access-list extended IOT-IN
+ permit udp any eq bootpc any eq bootps
+ permit icmp 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255 echo-reply
+ permit tcp 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255 established
+ deny ip 192.168.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+ deny ip 192.168.30.0 0.0.0.255 192.168.20.0 0.0.0.255
+ deny ip 192.168.30.0 0.0.0.255 192.168.40.0 0.0.0.255
+ deny ip 192.168.30.0 0.0.0.255 192.168.99.0 0.0.0.255
+ deny ip 192.168.30.0 0.0.0.255 172.16.50.0 0.0.0.255
+ permit ip 192.168.30.0 0.0.0.255 any
+ip access-list extended SERVERS-IN
+ permit icmp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 echo-reply
+ permit tcp 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255 established
+ deny ip 192.168.40.0 0.0.0.255 192.168.10.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.20.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.30.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 192.168.99.0 0.0.0.255
+ deny ip 192.168.40.0 0.0.0.255 172.16.50.0 0.0.0.255
+ permit ip 192.168.40.0 0.0.0.255 any
+ip access-list extended DMZ-IN
+ permit tcp 172.16.50.0 0.0.0.255 eq www any established
+ permit icmp 172.16.50.0 0.0.0.255 any echo-reply
+ deny ip 172.16.50.0 0.0.0.255 192.168.0.0 0.0.255.255
+ deny ip any any
+ip access-list standard MGMT-SSH
+ permit 192.168.10.0 0.0.0.255
+!
+banner motd ^CAUTHORISED ACCESS ONLY. All activity is logged. Disconnect now if you are not an authorised administrator.^C
+!
+!
+!
+!
+logging 192.168.40.20
+line con 0
+ exec-timeout 5 0
+ logging synchronous
+ login local
+!
+line aux 0
+!
+line vty 0 4
+ access-class MGMT-SSH in
+ exec-timeout 5 0
+ login local
+ transport input ssh
+!
+!
+!
+end
