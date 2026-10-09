@@ -1,5 +1,11 @@
 # Secure Small-Office Network (Cisco Packet Tracer)
 
+## Topology
+
+![Topology](screenshots/06-topology-final.png)
+
+Devices: 1 router (ISR4331, `R1`), 1 pretend ISP router (2901), 2 switches (2960), Staff PC, Guest Laptop, IoT Cam (a PC standing in for a camera), Internal Server, DMZ Web server, Syslog Server and an Internet Server.
+
 A segmented and hardened small-office/home-office (SOHO) network built and tested in Cisco Packet Tracer: VLANs, a DMZ web server, ACLs, NAT, DHCP, SSH-only management and central syslog logging.
 
 ## Overview
@@ -9,12 +15,6 @@ I built this to learn how real networks are separated and defended. It models a 
 **Skills shown:** network segmentation, router-on-a-stick, ACL design, NAT/PAT, DHCP, device hardening, port security, centralised logging, threat modelling and troubleshooting.
 
 **Tools:** Cisco Packet Tracer 8.x, GitHub (both free).
-
-## Topology
-
-![Topology](screenshots/06-topology-final.png)
-
-Devices: 1 router (ISR4331, `R1`), 1 pretend ISP router (2901), 2 switches (2960), Staff PC, Guest Laptop, IoT Cam (a PC standing in for a camera), Internal Server, DMZ Web server, Syslog Server and an Internet Server.
 
 ## Addressing and VLANs
 
