@@ -44,7 +44,7 @@ Even with these controls, an attacker who compromises a Staff PC has the widest 
 
 | Limitation | Why it matters |
 |---|---|
-| No real firewall. R1 is a router with ACLs. | ACLs are stateless and do not inspect applications. A real firewall tracks connections. |
+| ACLs on a router, not a stateful firewall. R1 is a router with ACLs. | ACLs are stateless and do not inspect applications. A real firewall tracks connections. |
 | No IDS/IPS. Nothing detects attacks. | Logs are collected, but nothing analyses or alerts on them. |
 | DMZ is a VLAN on a router sub-interface, not its own physical port. | A real DMZ sits on a dedicated firewall interface. |
 | SSH source addresses were not logged. Packet Tracer records SSH logins as `console` with `Source: 0.0.0.0`. | Remote brute-force detection could not be demonstrated. |
