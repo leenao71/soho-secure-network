@@ -93,8 +93,7 @@ Real faults found while building, and how each was found:
 1. **Staff PC could not ping its gateway.** The IP settings were right, but `show mac address-table` on SW2 showed the PC's MAC on the Guest port. The cables were in swapped ports. Moving the cable fixed it.
 2. **R1 could not ping the ISP although the link was green.** Cables and CDP were fine, so I compared the running configs and found a transposed digit in the ISP address (`203.0.133.1` instead of `203.0.113.1`).
 3. **SSH logins were closed immediately ("closed by foreign host").** The RSA key had never been generated, because the `crypto key generate rsa modulus 1024` form is rejected on these devices. Generating the key interactively fixed it.
-4. 3. **SSH logins were closed immediately ("closed by foreign host").** The RSA key had never been generated. The one-line form `crypto key generate rsa modulus 1024` was rejected with `% Invalid input`, so the key was never created. Running the command without `modulus` makes the device ask for the key size, and I typed `1024` at that prompt:
-
+3. **SSH logins were closed immediately ("closed by foreign host").** The RSA key had never been generated. The one-line form `crypto key generate rsa modulus 1024` was rejected with `% Invalid input`, so the key was never created. Running the command without `modulus` makes the device ask for the key size, and I typed `1024` at that prompt:
 ```
    R1(config)# crypto key generate rsa
    How many bits in the modulus [512]: 1024
@@ -103,10 +102,11 @@ Real faults found while building, and how each was found:
    `show ip ssh` then reported `SSH Enabled - version 2.0`, and the SSH logins worked.
 
 Method used each time: test one hop at a time, then read what the devices actually see (`show mac address-table`, `show running-config`).
+4. **Console login loop.** Pasting a username and password together made them land in the wrong prompts. Typing them one at a time fixed it.
 
 ## Limitations and next steps
 
-**Limitations:** Packet Tracer has no real firewall or IDS, the ACLs are stateless, the DMZ is a VLAN rather than a dedicated physical port, SSH login sources were not logged by the simulator, clocks are manual, and syslog is unauthenticated UDP. The full table is in [threat-model.md](threat-model.md).
+**Limitations:** ACLs on a router, not a stateful firewall. R1 filters with stateless ACLs. Packet Tracer offers a basic ASA simulation, but I used router ACLs. A real stateful firewall (pfSense, ASA) would track connections and inspect applications. The DMZ is a VLAN rather than a dedicated physical port, SSH login sources were not logged by the simulator, clocks are manual, and syslog is unauthenticated UDP. The full table is in [threat-model.md](threat-model.md).
 
 **Next steps:**
 - Rebuild the firewall layer in **pfSense** with the DMZ on its own interface.
