@@ -111,16 +111,16 @@ Method used each time: test one hop at a time, then read what the devices actual
 
 ```
 soho-secure-network/
-├── README.md
-├── threat-model.md
-├── SOHO-Secure-Network.pkt
 ├── configs/
 │   ├── R1.txt
 │   ├── SW1.txt
 │   ├── SW2.txt
 │   ├── ISP.txt
 │   └── (show vlan brief outputs)
-└── screenshots/
+├── screenshots/
+├── README.md
+├── SOHO-Secure-Network.pkt
+└──  threat-model.md
 ```
 
 ## How to open
