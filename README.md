@@ -112,11 +112,12 @@ Method used each time: test one hop at a time, then read what the devices actual
 ```
 soho-secure-network/
 ├── configs/
-│   ├── R1.txt
-│   ├── SW1.txt
-│   ├── SW2.txt
 │   ├── ISP.txt
-│   └── (show vlan brief outputs)
+│   ├── R1.txt
+│   ├── SW1-vlans.txt
+│   ├── SW1.txt
+│   ├── SW2-vlans.txt
+│   └── SW2.txt
 ├── screenshots/
 ├── README.md
 ├── SOHO-Secure-Network.pkt
